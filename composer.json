@@ -1,0 +1,25 @@
+{
+  "name": "stormsys/simplehal",
+  "description": "TBC",
+  "keywords": [ "hal", "hypermedia", "hal client" ],
+  "minimum-stability": "stable",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Diogo Moura"
+    }
+  ],
+  "autoload": {
+    "psr-4": {
+      "Stormsys\\": "src/"
+    }
+  },
+  "support": {
+    "source": "https://github.com/Stormsys/SimpleHal",
+    "issues": "https://github.com/Stormsys/SimpleHal/issues"
+  },
+  "require": {
+    "league/url": "3.2.1",
+    "guzzlehttp/guzzle": "~5.0"
+  }
+}
