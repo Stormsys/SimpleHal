@@ -11,14 +11,13 @@
  */
 namespace Stormsys\SimpleHal\Clients;
 
-use string;
 /**
  * PHP file_get_contents Implementation of the HalClientInterface
  *
  * @author Diogo Moura
  * @package Stormsys.SimpleHal
  */
-class HalClient implements HalClientInterface
+class FileGetContentsHalClient implements HalClientInterface
 {
     /**
      * {@inherit}
