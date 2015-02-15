@@ -2,9 +2,10 @@
 /**
  * This file is part of the Stormsys.SimpleHal library
  *
- * @license http://opensource.org/licenses/MIT
- * @link https://github.com/Stormsys/SimpleHal
- * @package Stormsys.SimpleHal
+ * @category SimpleHal
+ * @package  Stormsys.SimpleHal
+ * @license  http://opensource.org/licenses/MIT MIT
+ * @link     https://github.com/Stormsys/SimpleHal
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -19,10 +20,10 @@ use Stormsys\SimpleHal\Uri\UriTemplateProcessorInterface;
 
 
 /**
- * Represents a simple Hal Resource which provides functionality to navigate a hal api.
+ * Represents a simple Hal Resource which provides functionality to navigate
+ * a hal api.
  *
- * @author Diogo Moura
- * @package Stormsys.SimpleHal
+ * @author Diogo Moura <diogo@stormsys.net>
  */
 class Resource
 {
@@ -32,7 +33,7 @@ class Resource
      * @var \stdClass
      */
 
-    private $json;
+    private $_json;
 
 
     /**
@@ -41,7 +42,7 @@ class Resource
      * @var array of string => Resource|Resource[]
      */
 
-    private $embedded = [];
+    private $_embedded = [];
 
 
     /**
@@ -50,7 +51,7 @@ class Resource
      * @var HalClientInterface
      */
 
-    private $client;
+    private $_client;
 
 
     /**
@@ -59,38 +60,51 @@ class Resource
      * @var string
      */
 
-    private $url;
+    private $_url;
 
     /**
      * The implementation for processing uri templates.
      *
      * @var UriTemplateProcessorInterface
      */
-    private $uriTemplateProcessor;
+    private $_uriTemplateProcessor;
 
     /**
      * The implementation for joining relative uris.
      *
      * @var UriJoinerInterface
      */
-    private $uriJoiner;
+    private $_uriJoiner;
 
+    /**
+     * @param HalClientInterface $client a hal client to handle the transport layer
+     * @param UriTemplateProcessorInterface $uriTemplateProcessor URI processor instance
+     * @param UriJoinerInterface $uriJoiner a URI joiner instance.
+     * @param $url
+     * @param stdClass $json
+     */
+    public function __construct(
+        HalClientInterface $client,
+        UriTemplateProcessorInterface $uriTemplateProcessor,
+        UriJoinerInterface $uriJoiner,
+        $url, stdClass
+        $json = null
+    ) {
+        $this->_client = $client;
+        $this->_uriTemplateProcessor = $uriTemplateProcessor;
+        $this->_uriJoiner = $uriJoiner;
+        $this->_url = $url;
 
-    public function __construct(HalClientInterface $client, UriTemplateProcessorInterface $uriTemplateProcessor, UriJoinerInterface $uriJoiner, $url, stdClass $json = null)
-    {
-        $this->client = $client;
-        $this->uriTemplateProcessor = $uriTemplateProcessor;
-        $this->uriJoiner = $uriJoiner;
-        $this->url = $url;
-
-        //Either obtain the json from the HalClient or load it from the json provided.
+        // Either obtain the json from the HalClient or load it from
+        // the json provided.
         if ($json == null) {
-            $this->json = $this->client->fromUrlAsJsonObject($url);
+            $this->_json = $this->_client->fromUrlAsJsonObject($url);
         } else {
-            $this->json = $json;
+            $this->_json = $json;
 
-            //for embedded resources update the url that will act as the base url for this resource.
-            $this->url = $this->_parseLink($this->link('self'));
+            // for embedded resources update the url that will act as the base
+            // url for this resource.
+            $this->_url = $this->_parseLink($this->link('self'));
         }
 
         //wrap up all embedded resources.
@@ -99,36 +113,61 @@ class Resource
 
 
     /**
-     * internally loads the $embedded property, wrapping the json in a new Resource.
+     * Internally loads the $embedded property, wrapping the json in a new Resource.
+     *
+     * @return void
      */
     private function _wrapEmbedding()
     {
+
         //check if we have any embedded resources in the json.
-        if (isset($this->json->_embedded)) {
+        if (isset($this->_json->_embedded)) {
 
-            foreach ($this->json->_embedded as $key => $json) {
-                $this->embedded[$key] = [];
+            foreach ($this->_json->_embedded as $key => $json) {
 
-                //if the relation is just a resource, load only this otherwise load an array or resources to match.
+                $this->_embedded[$key] = [];
+
+                // if the relation is just a resource, load only this otherwise load
+                // an array or resources to match.
                 if (is_array($json)) {
+
                     foreach ($json as $jsonChild) {
-                        $this->embedded[$key][] = new Resource($this->client, $this->uriTemplateProcessor, $this->uriJoiner, $this->url, $jsonChild);
+
+                        $this->_embedded[$key][] = new Resource(
+                            $this->_client,
+                            $this->_uriTemplateProcessor,
+                            $this->_uriJoiner,
+                            $this->_url,
+                            $jsonChild
+                        );
+
                     }
+
                 } else {
-                    $this->embedded[$key][] = new Resource($this->client, $this->uriTemplateProcessor, $this->uriJoiner, $this->url, $json);
+
+                    $this->_embedded[$key][] = new Resource(
+                        $this->_client,
+                        $this->_uriTemplateProcessor,
+                        $this->_uriJoiner,
+                        $this->_url,
+                        $json
+                    );
+
                 }
 
             }
 
         }
+
     }
 
     /**
      * Processes a json link and obtains an absolute url for navigation.
      *
-     * @param  \stdClass $link internal use only, the json representation of the link.
-     * @param  array $variables key value pairs to be processed by the RFC 6570 URI Template processor.
-     * @return string                    a absolute uri, that has been processed for any template variables.
+     * @param \stdClass $link      a link
+     * @param array     $variables variables to process the URI
+     *
+     * @return string a parsed URL.
      */
     private function _parseLink(stdClass $link, array $variables = [])
     {
@@ -136,19 +175,21 @@ class Resource
 
         if (isset($link->templated) && $link->templated) {
 
-            $uri = $this->uriTemplateProcessor->process($uri, $variables);
+            $uri = $this->_uriTemplateProcessor->process($uri, $variables);
         }
 
-        return $this->uriJoiner->join($this->url, $uri);
+        return $this->_uriJoiner->join($this->_url, $uri);
     }
 
 
     /**
-     * Gets the first Embedded Resource, new Resource via Link or Json Property to match the $name in that order.
+     * Gets the Embedded Resource OR follows the link OR reads the resource property
+     * which match the $name in that order.
      *
-     * @param string $name the link relation, embeded link relation or property name.
-     * @param array $variables in the event that we are following a link, process any template variables.
-     * @return null|Resource|mixed The resource, property or null if not found.
+     * @param string $name      link relation or property name
+     * @param array  $variables variables to process the URI
+     *
+     * @return null|Resource|mixed The Resource, property value or null if not found.
      */
     private function _getResourceOrProperty($name, array $variables = [])
     {
@@ -162,16 +203,18 @@ class Resource
     }
 
     /**
-     * Gets a resource by its rel, by first checking the embedded items and then following the link if it was not found.
+     * Gets a resource by its rel, by first checking the embedded items
+     * and then following the link if it was not found.
      *
-     * @param string $rel link relation
-     * @param array $variables variables to process if following a link.
+     * @param string $rel       link relation
+     * @param array  $variables variables to process the URI
+     *
      * @return null|Resource the Resource matching the rel, null if none found.
      */
     private function _getResourceFromRel($rel, array $variables = [])
     {
-        if (isset($this->embedded[$rel])) {
-            return $this->embedded[$rel];
+        if (isset($this->_embedded[$rel])) {
+            return $this->_embedded[$rel];
         }
 
         if ($link = $this->link($rel) != null) {
@@ -184,32 +227,42 @@ class Resource
     /**
      * Gets a property from the underlying Hal json.
      *
-     * @param string $name the name of the property
+     * @param string $name resource property name
+     *
      * @return null|mixed the property value, if it does not exist then null.
      */
     private function _getProperty($name)
     {
-        if (isset($this->json->{$name})) {
-            return $this->json->{$name};
+        if (isset($this->_json->{$name})) {
+            return $this->_json->{$name};
         }
 
         return null;
     }
 
     /**
-     * Follows a link relation, resulting in a new Resource with that links representation.
+     * Follows a link relation, resulting in a new Resource.
      *
-     * @param string $rel the link relation.
-     * @param array $variables key value pairs in event of any template uris.
-     * @return Resource the new representation.
-     * @throws LinkNotPresentException when the relation is not part of the current resource.
+     * @param string|stdClass $rel       the link relation or link
+     * @param array           $variables variables to process the URI
+     *
+     * @return Resource Resource for given rel/link.
+     *
+     * @throws LinkNotPresentException relation is not part of the current resource.
      */
     public function follow($rel, array $variables = [])
     {
-        $link = $this->link($rel);
+        $link = $rel instanceof stdClass ? $rel : $this->link($rel);
 
         if ($link != null) {
-            return new Resource($this->client, $this->uriTemplateProcessor, $this->uriJoiner, $this->_parseLink($this->link($rel), $variables), $this->config);
+
+            return new Resource(
+                $this->_client,
+                $this->_uriTemplateProcessor,
+                $this->_uriJoiner,
+                $this->_parseLink($this->link($rel), $variables)
+            );
+
         }
 
         throw new LinkNotPresentException($rel);
@@ -218,7 +271,8 @@ class Resource
     /**
      * Gets the first link for a given relation.
      *
-     * @param string $rel the relation.
+     * @param string $rel link relation
+     *
      * @return null|stdClass first link to match the relation or null.
      */
     public function link($rel)
@@ -235,8 +289,9 @@ class Resource
     /**
      * Get a property by its name from the underlying json.
      *
-     * @param string $name the name of the underlying property.
-     * @return null|mixed if the property exists then it is returned else null is returned.
+     * @param string $name the name of the underlying property
+     *
+     * @return null|mixed the property value
      */
     public function prop($name)
     {
@@ -247,14 +302,16 @@ class Resource
      * Gets a link or list of links for a given relation.
      *
      * @param string $rel the relation.
-     * @return null|stdClass|\stdClass[] a list of links where there are many for a given relation
-     *                                     or a single link where there is a single relation
-     *                                     or null where a link is not found.
+     *
+     * @return null|stdClass|\stdClass[] a list of links where there are many for a
+     *                                   given relation or a single link where
+     *                                   there is a single relation or null where a
+     *                                   link is not found.
      */
     public function links($rel)
     {
-        if (isset($this->json->_links->{$rel})) {
-            return $this->json->_links->{$rel};
+        if (isset($this->_json->_links->{$rel})) {
+            return $this->_json->_links->{$rel};
         }
 
         return null;
@@ -279,32 +336,43 @@ class Resource
      */
     public function refresh()
     {
-        return new Resource($this->client, $this->uriTemplateProcessor, $this->uriJoiner, $this->_parseLink($this->link('self')), $this->config);
+
+        return new Resource(
+            $this->_client,
+            $this->_uriTemplateProcessor,
+            $this->_uriJoiner,
+            $this->_parseLink($this->link('self'))
+        );
+
     }
 
     /**
      * Gets an embedded resource or resources by its relation.
      *
      * @param string $rel the relation.
-     * @return null|Resource|Resource[] the resource, resource's or null where it was not found.
+     *
+     * @return null|Resource|Resource[] Resource(s).
      */
     public function embedded($rel)
     {
-        return isset($this->embedded[$rel]) ? $this->embedded[$rel] : null;
+        return isset($this->_embedded[$rel]) ? $this->_embedded[$rel] : null;
     }
 
 
     /**
-     * Magic accessor will provide access to (in this order) an embedded resource or resources by relation OR
-     *  a new resource obtained by following the link for the given relation OR a property value.
+     * Magic accessor will provide access to (in this order) an embedded resource
+     * or resources by relation or a new resource obtained by following the link
+     * for the given relation OR a property value.
      *
      * @example $resource->{'hal:embedded'};
      * @example $resource->{'hal:embedded'}[0];
      * @example $resource->{'hal:me'};
      * @example $resource->{'first_name'};
      *
-     * @param $name
-     * @return null|Resource|Resource[]|mixed Embedded Resource(s), Related Resource, Property or Null.
+     * @param string $name link relation or property name
+     *
+     * @return null|Resource|Resource[]|mixed Embedded Resource(s), Related Resource,
+     *                                        Property or Null.
      */
     public function __get($name)
     {
@@ -312,18 +380,22 @@ class Resource
     }
 
     /**
-     * Magic accessor will provide access to (in this order) an embedded resource or resources by relation OR
-     *  a new resource obtained by following the link for the given relation OR a property value.
+     * Magic accessor will provide access to (in this order) an embedded resource
+     * or resources by relation or a new resource obtained by following the link
+     * for the given relation OR a property value in the event that the link relation
+     * was chosen, the first argument is treated as template variables.
      *
-     * in the event that the link relation was chosen, the first argument is treated as template variables.
+     * @param string $name link relation or property name
+     * @param array  $args an array where the first element is the $variables
+     *                     for a URI template
      *
      * @example $resource->{'hal:embedded'}();
      * @example $resource->{'hal:users'}(['id' => 1]);
      * @example $resource->{'hal:me'}();
      * @example $resource->{'first_name'}();
      *
-     * @param string $name
-     * @return null|Resource|Resource[]|mixed Embedded Resource(s), Related Resource, Property or Null.
+     * @return null|Resource|Resource[]|mixed Embedded Resource(s), Related Resource,
+     *                                        Property or Null.
      */
     public function __call($name, $args)
     {

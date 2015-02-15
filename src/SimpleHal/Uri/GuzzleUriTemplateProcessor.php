@@ -2,23 +2,22 @@
 /**
  * This file is part of the Stormsys.SimpleHal library
  *
- * @license http://opensource.org/licenses/MIT
- * @link https://github.com/Stormsys/SimpleHal
- * @package Stormsys.SimpleHal
+ * @category SimpleHal
+ * @package  Stormsys.SimpleHal
+ * @license  http://opensource.org/licenses/MIT MIT
+ * @link     https://github.com/Stormsys/SimpleHal
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Stormsys\SimpleHal\Uri;
 
 use Guzzle\Parser\UriTemplate\UriTemplate;
 
 /**
  * Guzzle implementation for the UriTemplateProcessor
-
- * @author Diogo Moura
- * @package Stormsys.SimpleHal
+ *
+ * @author Diogo Moura <diogo@stormsys.net>
  */
 class GuzzleUriTemplateProcessor implements UriTemplateProcessorInterface
 {
@@ -27,13 +26,26 @@ class GuzzleUriTemplateProcessor implements UriTemplateProcessorInterface
      *
      * @var UriTemplate
      */
-    private $processor;
+    private $_processor;
 
-    public function __construct() {
-        $this->processor = new UriTemplate();
+    /**
+     * Creates a new GuzzleUriTemplateProcessor
+     */
+    public function __construct()
+    {
+        $this->_processor = new UriTemplate();
     }
 
-    public function process($template, array $variables) {
-        return $this->processor->expand($template, $variables);
+    /**
+     * Process the URI template using the supplied variables
+     *
+     * @param string $template  URI Template to expand
+     * @param array  $variables Variables to use with the expansion
+     *
+     * @return string Returns the expanded template url
+     */
+    public function process($template, array $variables)
+    {
+        return $this->_processor->expand($template, $variables);
     }
 }

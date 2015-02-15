@@ -2,9 +2,10 @@
 /**
  * This file is part of the Stormsys.SimpleHal library
  *
- * @license http://opensource.org/licenses/MIT
- * @link https://github.com/Stormsys/SimpleHal
- * @package Stormsys.SimpleHal
+ * @category SimpleHal
+ * @package  Stormsys.SimpleHal
+ * @license  http://opensource.org/licenses/MIT MIT
+ * @link     https://github.com/Stormsys/SimpleHal
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -14,19 +15,21 @@ namespace Stormsys\SimpleHal\Clients;
 /**
  * PHP file_get_contents Implementation of the HalClientInterface
  *
- * @author Diogo Moura
- * @package Stormsys.SimpleHal
+ * @author Diogo Moura <diogo@stormsys.net>
  */
 class FileGetContentsHalClient implements HalClientInterface
 {
     /**
-     * {@inherit}
+     * Gets the hal resource for a given url and deserialize's this into stdClass.
+     *
+     * @param string $url url of the resource.
+     *
+     * @return \stdClass the php json object.
      */
     public function fromUrlAsJsonObject($url)
     {
-        $context = stream_context_create(array('http' => array(
-            'header' => 'Accept: application/json'
-        )));
+        $contextSettings = ['http' => [ 'header' => 'Accept: application/json']];
+        $context = stream_context_create($contextSettings);
 
         return json_decode(file_get_contents($url, false, $context));
     }

@@ -2,9 +2,10 @@
 /**
  * This file is part of the Stormsys.SimpleHal library
  *
- * @license http://opensource.org/licenses/MIT
- * @link https://github.com/Stormsys/SimpleHal
- * @package Stormsys.SimpleHal
+ * @category SimpleHal
+ * @package  Stormsys.SimpleHal
+ * @license  http://opensource.org/licenses/MIT MIT
+ * @link     https://github.com/Stormsys/SimpleHal
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -14,18 +15,30 @@ namespace Stormsys\SimpleHal\Exception;
 use Exception;
 
 /**
- * An exception which describes when a link relation was required for navigation but not found.
+ * An exception which describes when a link relation was required for
+ * navigation but not found.
  *
- * @author Diogo Moura
- * @package Stormsys.SimpleHal
+ * @author Diogo Moura <diogo@stormsys.net>
  */
-class LinkNotPresentException extends \Exception {
-    private $rel;
+class LinkNotPresentException extends Exception
+{
+    /**
+     * The relation which this exception describes.
+     *
+     * @var string
+     */
+    private $_rel;
 
-    public function __construct($rel, $code = 0, Exception $previous = null) {
-        parent::__construct("{$rel} was not present in the resources _links.", $code, $previous);
+    /**
+     * Constructs the exception.
+     *
+     * @param string $rel link relation that this exception represents.
+     */
+    public function __construct($rel)
+    {
+        parent::__construct("{$rel} was not present in the resources _links.");
 
-        $this->rel = $rel;
+        $this->_rel = $rel;
     }
 
     /**
@@ -35,7 +48,7 @@ class LinkNotPresentException extends \Exception {
      */
     public function getRel()
     {
-        return $this->rel;
+        return $this->_rel;
     }
 
 }
