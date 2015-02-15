@@ -1,12 +1,16 @@
 {
   "name": "stormsys/simplehal",
-  "description": "TBC",
-  "keywords": [ "hal", "hypermedia", "hal client" ],
+  "description": "SimpleHal is an easy to use library for consuming Hal API's",
+  "keywords": [ "hal", "hypermedia", "hal client", "HalClient" ],
+  "homepage": "https://github.com/Stormsys/SimpleHal",
+  "type": "library",
   "minimum-stability": "stable",
   "license": "MIT",
   "authors": [
     {
-      "name": "Diogo Moura"
+      "name": "Diogo Moura",
+      "email": "diogo@stormsys.net",
+      "homepage": "https://github.com/Stormsys"
     }
   ],
   "autoload": {
