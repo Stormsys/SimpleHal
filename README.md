@@ -149,3 +149,10 @@ by default the library has bundled the following implementations:
 * Stormsys\SimpleHal\Uri\LeagueUriJoiner
 * Stormsys\SimpleHal\Clients\GuzzleHalClient
 * Stormsys\SimpleHal\Clients\FileGetContentsHalClient
+
+
+### TODO
+
+* Add Tests
+* Support for Persist (POST/PUT)
+* Support for Delete
