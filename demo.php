@@ -2,7 +2,7 @@
 
 include('./vendor/autoload.php');
 
-use Guzzle\Http\Client;
+use GuzzleHttp\Client;
 use Stormsys\SimpleHal\Clients\GuzzleHalClient;
 use Stormsys\SimpleHal\Resource;
 use Stormsys\SimpleHal\Uri\GuzzleUriTemplateProcessor;

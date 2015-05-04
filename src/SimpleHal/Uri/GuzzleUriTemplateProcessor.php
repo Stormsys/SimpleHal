@@ -12,7 +12,7 @@
  */
 namespace Stormsys\SimpleHal\Uri;
 
-use Guzzle\Parser\UriTemplate\UriTemplate;
+use GuzzleHttp\UriTemplate;
 
 /**
  * Guzzle implementation for the UriTemplateProcessor

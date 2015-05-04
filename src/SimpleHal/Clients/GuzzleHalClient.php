@@ -12,7 +12,7 @@
  */
 namespace Stormsys\SimpleHal\Clients;
 
-use Guzzle\Http\ClientInterface;
+use GuzzleHttp\ClientInterface;
 
 /**
  * Guzzle implementation of the HalClientInterface
@@ -43,7 +43,7 @@ class GuzzleHalClient implements HalClientInterface
     public function fromUrlAsJsonObject($url)
     {
         $headers = ['Accept' => 'application/json'];
-        $response  = $this->_client->get($url, $headers)->send();
+        $response  = $this->_client->get($url, [ 'headers' => $headers ]);
         return json_decode($response->getBody(true), false);
     }
 }
