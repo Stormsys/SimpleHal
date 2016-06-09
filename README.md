@@ -2,7 +2,7 @@
 
 SimpleHal is an easy to use library for consuming Hal API's.
 
-### Installation using Composer
+## Installation using Composer
 
 Add the dependency:
 
@@ -10,13 +10,13 @@ Add the dependency:
 composer require stormsys/simplehal
 ```
 
-### Limitations
+## Limitations
 
 Currently the library supports only GET requests, there are plans to add support for PUT, POST and DELETE in the future.
 
-### Usage
+## Usage
 
-##### Setup Root Resource
+### Setup Root Resource
 
 This examples shows how to setup a root resource to begin nagivation.
 
@@ -37,7 +37,7 @@ $apiRootUrl = 'http://haltalk.herokuapp.com';
 $root = new Resource($client, $uriTemplateProcessor, $uriJoiner, $apiRootUrl);
 ```
 
-##### Following Non-Templated Links
+### Following Non-Templated Links
 
 once you have obtained a resource, SimpleHal offers several ways to follow links.
 
@@ -52,7 +52,7 @@ $latestPosts = $root->{'ht:latest-posts'};
 $latestPosts = $root->{'ht:latest-posts'}();
 ```
 
-##### Following Templated Links
+### Following Templated Links
 
 Similar to the above, you can follow templated links by providing the template variables like so.
 
@@ -66,7 +66,7 @@ $john = $root->{'ht:me'}(['name' => 'john']);
 ```
 
 
-##### Reading Embedded Resources
+### Reading Embedded Resources
 
 Sometimes partial, incomplete or full resources are embedded into the hal document, these are accessible using the embedded function like so.
 
@@ -100,7 +100,7 @@ $johnsRealName = $john->{'real_name'}();
 $johnsRealName = $john->real_name();
 ```
 
-##### Refresh / Obtain Full Representations
+### Refresh / Obtain Full Representations
 
 You can update or refresh resources that you have already loaded by calling refresh()
 
@@ -113,7 +113,7 @@ or in the event that you are using a embedded partial resource as long as a self
 $firstPost = $postsArray[0]->full();
 ```
 
-##### Chain Example
+### Chain Example
 
 The example below shows how you might chain methods to obtain some data on a hal api.
 
@@ -124,7 +124,7 @@ $postBody = $root->follow('ht:latest-posts')->embedded('ht:post')[0]->content;
 $postBody = $root->follow('ht:latest-posts')->embedded('ht:post')[0]->prop('content');
 ```
 
-##### Magic Methods
+### Magic Methods
 
 You can access embedded resources, follow links and access proprties through the magic acessors and method overloads. the name of the field/method will be equal to the relation or the property name.
 
@@ -136,7 +136,7 @@ the order in which SimpleHal will attempt to resolve the request is:
 
 is it impoarant to understand the order which requests are resolved as the library will pick the first one that is found, in the event of duplicates an embedded resource will be picked over the others, and following a link before a property.
 
-##### Interfaces
+### Interfaces
 The library offer the following interfaces which can be custom implemented.
 
 * Stormsys\SimpleHal\Uri\UriTemplateProcessorInterface
@@ -151,7 +151,7 @@ by default the library has bundled the following implementations:
 * Stormsys\SimpleHal\Clients\FileGetContentsHalClient
 
 
-### TODO
+## TODO
 
 * Add Tests
 * Support for Persist (POST/PUT)
