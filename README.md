@@ -1,3 +1,5 @@
+[![Total Downloads](https://poser.pugx.org/stormsys/simplehal/d/total.svg)](https://packagist.org/packages/stormsys/simplehal)
+
 # SimpleHAL
 
 SimpleHal is an easy to use library for consuming Hal API's.
